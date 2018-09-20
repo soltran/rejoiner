@@ -14,6 +14,8 @@
 
 package com.google.api.graphql.examples.library.graphqlserver;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.api.graphql.execution.GuavaListenableFutureSupport;
 import com.google.api.graphql.rejoiner.Schema;
 import com.google.common.base.Strings;
@@ -77,12 +79,18 @@ final class GraphQlServlet extends HttpServlet {
     String operationName = (String) json.get("operationName");
     Map<String, Object> variables = getVariables(json.get("variables"));
 
+    String authHeader = req.getHeader("Authorization");
+    String jwt = authHeader.split(" ")[1];
+    DecodedJWT decodedJwt = JWT.decode(jwt);
+    decodedJwt.getClaims();
+    String accountName =
+      decodedJwt.getClaim("https://my.rubrik.com/account").asString();
     ExecutionInput executionInput =
         ExecutionInput.newExecutionInput()
             .query(query)
             .operationName(operationName)
             .variables(variables)
-            .context(dataLoaderRegistry)
+            .context(accountName)
             .build();
     ExecutionResult executionResult = graphql.execute(executionInput);
     resp.setContentType("application/json");

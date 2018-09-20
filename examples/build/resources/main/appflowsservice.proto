@@ -1,0 +1,393 @@
+syntax = "proto3";
+
+package appflowsservice;
+option go_package = "proto";
+
+/* History
+    V1: It's based on commit 4d954d78eb4298ebf9b27dfc67b55cfe66322c9e in SDMain repo
+*/
+
+service AppFlowsService {
+  rpc QueryAppBlueprints(QueryAppBlueprintsReq) returns (AppBlueprintsSummaries) {}
+
+  rpc CreateAppBlueprint(CreateAppBlueprintReq) returns (CreateAppBlueprintRsp) {}
+  rpc GetAppBlueprint(GetAppBlueprintReq) returns (AppBlueprintDetail) {}
+  rpc UpdateAppBlueprint(UpdateAppBlueprintReq) returns (UpdateAppBlueprintRsp) {}
+  rpc DeleteAppBlueprint(DeleteAppBlueprintReq) returns (DeleteAppBlueprintRsp) {}
+
+  rpc QueryAppBlueprintSnapshot(QueryAppBlueprintSnapshotReq) returns (AppBlueprintSnapshotSummaries) {}
+
+  rpc CreateBlueprintSnapshot(CreateBlueprintSnapshotReq) returns (Result) {}
+  rpc DeleteAppBlueprintSnapshots(DeleteAppBlueprintSnapshotsReq) returns (Result) {}
+  rpc GetAppBlueprintSnapshot(GetAppBlueprintSnapshotReq) returns (AppBlueprintSnapshotDetail) {}
+  rpc DeleteAppBlueprintSnapshot(DeleteAppBlueprintSnapshotReq) returns (Result) {}
+
+  rpc GetAppBlueprintMissedSnapshots(GetAppBlueprintMissedSnapshotsReq) returns (MissedSnapshots) {}
+
+  rpc SearchAppBlueprint(SearchAppBlueprintReq) returns (AppBlueprintSearchResponses) {}
+
+  rpc CreateAppBlueprintSnapshotExport(CreateAppBlueprintSnapshotExportReq) returns (Result) {}
+
+  rpc CreateAppBlueprintSnapshotMount(CreateAppBlueprintSnapshotMountReq) returns (Result) {}
+
+  rpc CreateAppBlueprintSnapshotInstantRecovery(CreateAppBlueprintSnapshotInstantRecoveryReq) returns (Result) {}
+}
+
+message Result {
+    bool success = 1;
+}
+
+//Message defination for QueryAppBlueprints
+message QueryAppBlueprintsReq {
+    string account_name = 1;
+    string sort_by = 2;
+    string sort_order = 3;
+    int32 limit = 4;
+    int32 offset = 5;
+    string name = 6;
+    bool is_relic = 7;
+    string effective_sla_domain_id = 8;
+    string primary_cluster_fid = 9;
+    string sla_assignment = 10;
+}
+
+message SlaAssignable {
+    string fid = 1;
+    string name = 2;
+    string configured_sla_domain_fid = 3;
+    string configured_sla_domain_name = 4;
+    string primary_cluster_fid = 5;
+}
+
+enum SlaAssignment {
+    DERIVED = 0;
+    DIRECT = 1;
+    UNASSIGNED = 2;
+}
+
+message Snappable {
+    SlaAssignable sla_assignable = 1;
+    SlaAssignment sla_assignment = 2;
+    string effective_sla_domain_fid = 3;
+    string effective_sla_domain_name = 4;
+    string effective_sla_source_object_fid = 5;
+    string effective_sla_source_object_name = 6;
+}
+
+enum AppBlueprintStatus {
+    IN_PROGRESS = 0;
+    READY = 1;
+}
+
+message AppBlueprintSummary {
+    string fid = 1;
+    string name = 3;
+    bool is_relic = 4;
+    AppBlueprintStatus status = 5;
+    string primary_cluster_fid = 6;
+}
+
+message AppBlueprintsSummaries {
+    repeated AppBlueprintSummary app_blue_print_summary = 1;
+}
+
+//Messages for CreateAppBlueprint
+
+message AppBlueprintChild {
+    string fid = 1;
+    int32 boot_priority = 2;
+}
+
+message CreateAppBlueprintReq {
+    string account_name = 1;
+    string name = 2;
+    repeated AppBlueprintChild children = 3;
+    string primary_cluster_fid = 4;
+}
+
+message CreateAppBlueprintRsp {
+    string pending_action_id = 1;
+    AppBlueprintDetail app_detail = 2;
+}
+
+message AppBlueprintDetail {
+    AppBlueprintSummary app_blueprint_summary = 1;
+    repeated AppBlueprintChild children = 2;
+}
+
+//Messages for GetAppBlueprint
+
+message GetAppBlueprintReq {
+    string account_name = 1;
+    string fid = 2;
+}
+
+//Messages for UpdateAppBlueprint
+message UpdateAppBlueprintReq {
+    message AppBlueprintPatch {
+        string name = 1;
+        string configured_domain_fid = 2;
+        repeated AppBlueprintChild children = 3;
+    }
+
+    string account_name = 1;
+    string fid = 2;
+    AppBlueprintPatch patch_properties = 3;
+}
+
+message UpdateAppBlueprintRsp {
+    string pending_action_id = 1;
+    AppBlueprintDetail app_detail = 2;
+}
+
+//Messags for DeleteAppBlueprint
+
+message DeleteAppBlueprintReq {
+    string account_name = 1;
+    string fid = 2;
+}
+
+message DeleteAppBlueprintRsp {
+    string pending_action_id = 1;
+    Result result = 2;
+}
+
+//Messages for QueryAppBlueprintSnapshot
+message QueryAppBlueprintSnapshotReq {
+    string account_name = 1;
+    string app_blueprint_fid = 2;
+}
+
+message BaseSnapshotSummary {
+    string fid = 1;
+    string date = 2;
+    string expiration_date = 3;
+    string source_object_type = 4;
+    bool is_on_demand_snapshot = 5;
+    int64 cloud_state = 6;
+    string consistency_level = 7;
+    int64 index_state = 8;
+    repeated string replication_location_ids = 9;
+    repeated string archival_location_ids = 10;
+    string sla_fid = 11;
+    string sla_name = 12;
+}
+
+message AppBlueprintChildSnapshotSummary {
+    string child_snapshot_fid = 1;
+    string child_name = 2;
+    int64 index_state = 3;
+}
+
+message AppBlueprintSnapshotSummary {
+    BaseSnapshotSummary base_snapshot_summary = 1;
+
+    repeated AppBlueprintChildSnapshotSummary child_snapshots = 2;
+
+    string app_blueprint_name = 3;
+    bool is_synchronized = 4;
+}
+
+message AppBlueprintSnapshotSummaries {
+    repeated AppBlueprintSnapshotSummary app_blueprint_snapshot_summary = 1;
+}
+
+//Messages for CreateAppBlueprintSnapshot
+
+message BaseOnDemandSnapshotConfig {
+    string sla_fid = 1;
+}
+
+message CreateBlueprintSnapshotReq {
+    string account_name = 1;
+    string fid = 2;
+    BaseOnDemandSnapshotConfig config = 3;
+}
+
+//Message for DeleteAppBlueprintSnapshots
+message DeleteAppBlueprintSnapshotsReq {
+    string account_name = 1;
+    string fid = 2;
+}
+
+//Messages for GetAppBlueprintSnapshot
+message GetAppBlueprintSnapshotReq {
+    string account_name = 1;
+    string fid = 2;
+}
+
+message AppBlueprintChildSnapshotDetail {
+    AppBlueprintSnapshotSummary summary = 1;
+}
+
+message AppBlueprintSnapshotDetail {
+    AppBlueprintSnapshotSummary summary = 1;
+
+    repeated AppBlueprintChildSnapshotDetail child_snapshots = 2;
+}
+
+//Messages for DeleteAppBlueprintSnapshot
+message DeleteAppBlueprintSnapshotReq {
+    string account_name = 1;
+    string fid = 2;
+    string location = 3;
+}
+
+//Messages for GetAppBlueprintMissedSnapshots
+message GetAppBlueprintMissedSnapshotsReq {
+    string account_name = 1;
+    string fid = 2;
+}
+
+enum SlaTimeUnit {
+    HOURLY = 0;
+    DAILY = 1;
+    WEEKLY = 2;
+    MONTHLY = 3;
+    QUARTERLY = 4;
+    YEARLY = 5;
+}
+
+enum MissedSnapshotDayOfTimeUnit {
+    MONDAY = 0;
+    TUESDAY = 1;
+    WEDNESDAY = 2;
+    THURSDAY = 3;
+    FRIDAY = 4;
+    SATURDAY = 5;
+    SUNDAY = 6;
+    FIRSTDAY = 7;
+    FIFTEENTH = 8;
+    LASTDAY = 9;
+}
+
+message MissedSnapshotTimeUnitConfig {
+    SlaTimeUnit time_unit = 1;
+    int32 frequency = 2;
+    int32 retention = 3;
+    MissedSnapshotDayOfTimeUnit day_of_time = 4;
+}
+
+message MissedSnapshot {
+    repeated string archival_location_type = 1;
+    string missed_snapshot_time = 2;
+    repeated MissedSnapshotTimeUnitConfig missed_snapshot_time_units = 3;
+}
+
+message MissedSnapshots {
+    repeated MissedSnapshot missed_snapshots = 1;
+}
+
+//Messages for SearchAppBlueprint
+message SearchAppBlueprintReq {
+    string account_name = 1;
+    string fid = 2;
+    string path = 3;
+}
+
+message FileVersion {
+    string last_modified = 1;
+    int64 size = 2;
+    string snapshot_id = 3;
+    string file_mode = 4;
+    string source = 5;
+}
+
+message SearchResponse {
+    string path = 1;
+    string filename = 2;
+    repeated FileVersion file_versions = 3;
+}
+
+message AppBlueprintSearchResponse {
+    SearchResponse search_response = 1;
+
+    string child_object_id = 2;
+    string child_object_name = 3;
+}
+
+message AppBlueprintSearchResponses {
+    repeated AppBlueprintSearchResponse response = 1;
+}
+
+//Messages for CreateAppBlueprintSnapshotExport
+
+message AppBlueprintRestoreSnapshotJobConfigBase {
+    bool should_power_on = 1;
+}
+
+message AppBlueprintChildSnappableLocalRecoverySpec {
+    string original_vm_id = 1;
+    string host_id = 2;
+    bool disable_network = 3;
+    bool remove_network_devices = 4;
+    bool should_keep_mac_addresses = 5;
+    bool should_unregister_vm = 6;
+}
+
+message AppBlueprintChildSnappableExportSpec {
+    AppBlueprintChildSnappableLocalRecoverySpec local_recovery_spec = 1;
+    string datastore_id = 2;
+    string vm_name = 3;
+}
+
+message AppBlueprintExportSnapshotJobConfig {
+    AppBlueprintRestoreSnapshotJobConfigBase base_config = 1;
+    string new_app_name = 2;
+    string target_app_id = 3;
+    bool create_new_app = 4;
+    repeated AppBlueprintChildSnappableExportSpec children_to_restore = 5;
+    string polaris_forever_id = 6;
+}
+
+message CreateAppBlueprintSnapshotExportReq {
+    string account_name = 1;
+    string snapshot_fid = 2;
+    AppBlueprintExportSnapshotJobConfig config = 3;
+}
+
+//Messages for CreateAppBlueprintSnapshotMount
+
+message AppBlueprintChildSnappableMountSpec {
+    AppBlueprintChildSnappableLocalRecoverySpec local_recovery_spec = 1;
+    string data_store_name = 2;
+    string vm_name = 3;
+    int32 vlan = 4;
+}
+
+message AppBlueprintMountSnapshotJobConfig {
+    AppBlueprintRestoreSnapshotJobConfigBase job_config_base = 1;
+    string new_app_name = 2;
+    bool create_datastore_only = 3;
+    string target_app_blueprint_id = 4;
+    bool should_create_new_app = 5;
+    string polaris_forever_id = 6;
+    repeated AppBlueprintChildSnappableMountSpec children_to_restore = 7;
+}
+
+message CreateAppBlueprintSnapshotMountReq {
+    string account_name = 1;
+    string fid = 2;
+    AppBlueprintMountSnapshotJobConfig config = 3;
+}
+
+//Messages for CreateAppBlueprintSnapshotInstantRecovery
+message AppBlueprintChildSnappableInstantRecoverySpec {
+    AppBlueprintChildSnappableLocalRecoverySpec local_recovery_spec = 1;
+    string data_store_name = 2;
+    bool preserve_moid = 3;
+    int32 vlan = 4;
+}
+
+message InstantRecoveryJobConfig {
+    AppBlueprintRestoreSnapshotJobConfigBase base_config = 1;
+    repeated AppBlueprintChildSnappableInstantRecoverySpec childen_to_restore = 2;
+    bool should_remove_children_from_other_app_blueprints = 3;
+    bool should_remove_children_from_app_blueprint = 4;
+}
+
+message CreateAppBlueprintSnapshotInstantRecoveryReq {
+    string account_name = 1;
+    string fid = 2;
+    InstantRecoveryJobConfig config = 3;
+}

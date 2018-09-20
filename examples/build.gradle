@@ -20,6 +20,14 @@ repositories {
   }
 }
 
+sourceSets {
+  main {
+    proto {
+      srcDir '/Users/soltran/Projects/spark/src/rubrik/appflows-service/proto'
+    }
+  }
+}
+
 // IMPORTANT: You probably want the non-SNAPSHOT version of gRPC. Make sure you
 // are looking at a tagged version of the example and not "master"!
 
@@ -33,12 +41,14 @@ dependencies {
   compile "io.grpc:grpc-netty:${grpcVersion}"
   compile "io.grpc:grpc-protobuf:${grpcVersion}"
   compile "io.grpc:grpc-stub:${grpcVersion}"
-  compile "com.google.api.graphql:rejoiner:0.0.2-SNAPSHOT"
-  compile "com.google.api.graphql:execution:0.0.1-SNAPSHOT"
+  compile "io.netty:netty-tcnative-boringssl-static:2.0.6.Final"
+  compile "com.google.api.graphql:rejoiner:0.2.0-SNAPSHOT"
   compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.3.8.v20160314'
   compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.6.2'
   compile 'com.google.inject.extensions:guice-servlet:4.2.0'
   compile group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '9.3.8.v20160314'
+  compile "net.javacrumbs.future-converter:future-converter-java8-guava:1.1.0"
+  compile 'com.auth0:java-jwt:3.4.0'
 }
 
 protobuf {

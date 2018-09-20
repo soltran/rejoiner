@@ -8,5 +8,6 @@ public final class ClientModule extends AbstractModule {
     protected void configure() {
         install(new BookClientModule());
         install(new ShelfClientModule());
+        install(new AppFlowClientModule());
     }
 }

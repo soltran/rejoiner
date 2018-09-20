@@ -27,16 +27,16 @@ import org.dataloader.DataLoaderRegistry;
 /** A GraphQL {@link SchemaModule} backed by a gRPC service. */
 final class BookSchemaModule extends SchemaModule {
 
-  @Query("getBook")
-  @RelayNode
-  ListenableFuture<Book> getBook(
-      GetBookRequest request, DataFetchingEnvironment dataFetchingEnvironment) {
-    return FutureConverter.toListenableFuture(
-        dataFetchingEnvironment
-            .<DataLoaderRegistry>getContext()
-            .<String, Book>getDataLoader("books")
-            .load(request.getId()));
-  }
+//  @Query("getBook")
+//  @RelayNode
+//  ListenableFuture<Book> getBook(
+//      GetBookRequest request, DataFetchingEnvironment dataFetchingEnvironment) {
+//    return FutureConverter.toListenableFuture(
+//        dataFetchingEnvironment
+//            .<DataLoaderRegistry>getContext()
+//            .<String, Book>getDataLoader("books")
+//            .load(request.getId()));
+//  }
 
   @Query("listBooks")
   ListenableFuture<ListBooksResponse> listBooks(

@@ -10,5 +10,6 @@ public final class SchemaModule extends AbstractModule {
     install(new ShelfSchemaModule()); // Creates queries and mutations for the Shelf service
     install(new LibrarySchemaModule()); // Joins together Shelf and Book services
     install(new SeedLibrarySchemaModule()); // Fills the Shelf and Book services with data
+    install(new AppFlowSchemaModule());
   }
 }
