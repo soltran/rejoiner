@@ -1,6 +1,10 @@
 package com.google.api.graphql.examples.library.graphqlserver.schema;
 
 import appflowsservice.Appflowsservice;
+import appflowsservice.Appflowsservice.AppBlueprintSearchResponses;
+import appflowsservice.Appflowsservice.UpdateAppBlueprintRsp;
+import appflowsservice.Appflowsservice.UpdateAppBlueprintReq;
+import appflowsservice.Appflowsservice.AppBlueprintsSummaries;
 import appflowsservice.Appflowsservice.CreateAppBlueprintRsp;
 import appflowsservice.Appflowsservice.CreateAppBlueprintReq;
 import appflowsservice.Appflowsservice.GetAppBlueprintReq;
@@ -18,6 +22,7 @@ import graphql.schema.DataFetchingEnvironment;
 
 final class AppFlowSchemaModule extends SchemaModule {
 
+  @SchemaModification
   TypeModification removeAccountInput =
     Type.find(QueryAppBlueprintsReq.getDescriptor()).removeField(
       "accountName");
@@ -34,7 +39,7 @@ final class AppFlowSchemaModule extends SchemaModule {
   }
 
   @Query("appBlueprintList")
-  ListenableFuture<Appflowsservice.AppBlueprintsSummaries> getAppBlueprintList(
+  ListenableFuture<AppBlueprintsSummaries> getAppBlueprintList(
     QueryAppBlueprintsReq request,
     DataFetchingEnvironment dataFetchingEnvironment,
     AppFlowsServiceFutureStub client) {
@@ -42,6 +47,17 @@ final class AppFlowSchemaModule extends SchemaModule {
       .setAccountName(dataFetchingEnvironment.<String>getContext())
       .build();
     return client.queryAppBlueprints(adjustedReq);
+  }
+
+  @Query("searchAppBlueprint")
+  ListenableFuture<AppBlueprintSearchResponses> searchAppBlueprints(
+    Appflowsservice.SearchAppBlueprintReq request,
+    DataFetchingEnvironment dataFetchingEnvironment,
+    AppFlowsServiceFutureStub client) {
+    Appflowsservice.SearchAppBlueprintReq adjustedReq = request.toBuilder()
+      .setAccountName(dataFetchingEnvironment.<String>getContext())
+      .build();
+    return client.searchAppBlueprint(adjustedReq);
   }
 
   @Mutation("createAppBlueprint")
@@ -52,9 +68,38 @@ final class AppFlowSchemaModule extends SchemaModule {
     return client.createAppBlueprint(request);
   }
 
+  @Mutation("updateAppBlueprint")
+  ListenableFuture<UpdateAppBlueprintRsp> updateAppBlueprint(
+    UpdateAppBlueprintReq request,
+    DataFetchingEnvironment dataFetchingEnvironment,
+    AppFlowsServiceFutureStub client
+  ) {
+    UpdateAppBlueprintReq adjustedReq = request.toBuilder()
+      .setAccountName(dataFetchingEnvironment.<String>getContext())
+      .build();
+    return client.updateAppBlueprint(adjustedReq);
+  }
+
+  @Mutation("deleteAppBlueprint")
+  ListenableFuture<Appflowsservice.DeleteAppBlueprintRsp> deleteAppBlueprint(
+    Appflowsservice.DeleteAppBlueprintReq request,
+    DataFetchingEnvironment dataFetchingEnvironment,
+    AppFlowsServiceFutureStub client
+  ) {
+    Appflowsservice.DeleteAppBlueprintReq adjustedReq = request.toBuilder()
+      .setAccountName(dataFetchingEnvironment.<String>getContext())
+      .build();
+    return client.deleteAppBlueprint(adjustedReq);
+  }
+
   @SchemaModification
   TypeModification arbitraryName =
-    Type.find(Appflowsservice.AppBlueprintsSummaries.getDescriptor()).renameType(
-      "CreateNewAppBlueprintResponse");
+    Type.find(AppBlueprintsSummaries.getDescriptor()).renameType(
+      "AppBluePrints");
+
+  @SchemaModification
+  TypeModification oneMore =
+    Type.find(QueryAppBlueprintsReq.getDescriptor()).renameType(
+      "AppBlueprintQueryRequest");
 
 }
