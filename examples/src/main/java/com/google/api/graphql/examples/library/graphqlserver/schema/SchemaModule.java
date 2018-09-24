@@ -11,5 +11,6 @@ public final class SchemaModule extends AbstractModule {
     install(new LibrarySchemaModule()); // Joins together Shelf and Book services
     install(new SeedLibrarySchemaModule()); // Fills the Shelf and Book services with data
     install(new AppFlowSchemaModule());
+    install(new LambdaSchemaModule());
   }
 }

@@ -38,7 +38,7 @@ final class AppFlowSchemaModule extends SchemaModule {
     return client.getAppBlueprint(adjustedReq);
   }
 
-  @Query("appBlueprintList")
+  @Query("appBlueprintSummaries")
   ListenableFuture<AppBlueprintsSummaries> getAppBlueprintList(
     QueryAppBlueprintsReq request,
     DataFetchingEnvironment dataFetchingEnvironment,
@@ -63,8 +63,12 @@ final class AppFlowSchemaModule extends SchemaModule {
   @Mutation("createAppBlueprint")
   ListenableFuture<CreateAppBlueprintRsp> createAppBlueprint(
     CreateAppBlueprintReq request,
+    DataFetchingEnvironment dataFetchingEnvironment,
     AppFlowsServiceFutureStub client
   )  {
+    CreateAppBlueprintReq adjustedReq = request.toBuilder()
+      .setAccountName(dataFetchingEnvironment.<String>getContext())
+      .build();
     return client.createAppBlueprint(request);
   }
 
@@ -95,7 +99,7 @@ final class AppFlowSchemaModule extends SchemaModule {
   @SchemaModification
   TypeModification arbitraryName =
     Type.find(AppBlueprintsSummaries.getDescriptor()).renameType(
-      "AppBluePrints");
+      "AppBlueprintsSummaries");
 
   @SchemaModification
   TypeModification oneMore =

@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package lambdaconfigurationservice;
+option go_package = "proto";
+
+service LambdaConfiguration {
+    rpc EnableAutomaticFmdUpload(EnableAutomaticFmdUploadReq) returns (EnableAutomaticFmdUploadReply) {}
+    rpc EnableLambdaForSnappable(EnableLambdaForSnappableReq) returns (EnableLambdaForSnappableReply) {}
+    rpc GetSparkSettableLambdaConfig(GetLambdaConfigReq) returns (GetLambdaConfigReply) {}
+}
+
+message EnableAutomaticFmdUploadReq {
+    string account_id = 1;
+    string cluster_id = 2;
+    bool enabled = 3;
+}
+
+message EnableAutomaticFmdUploadReply {
+    string cluster_id = 1;
+    bool enabled = 2;
+}
+
+message EnableLambdaForSnappableReq {
+    string account_id = 1;
+    string cluster_id = 2;
+    string snappable_id = 3;
+    bool enabled = 4;
+}
+
+message EnableLambdaForSnappableReply {
+    string cluster_id = 1;
+    string snappable_id = 2;
+    bool enabled = 3;
+}
+
+message GetLambdaConfigReq {
+    string account_id = 1;
+    string cluster_id = 2;
+}
+
+message GetLambdaConfigReply {
+    string account_id = 1;
+    string cluster_id = 2;
+    bool enable_automatic_fmd_upload = 4;
+    bool enable_fmd_upload_for_all_resources = 5;
+    string default_diff_fmd_upload_prefix = 6;
+    int32 max_snapshots_to_upload_automatically = 7;
+}

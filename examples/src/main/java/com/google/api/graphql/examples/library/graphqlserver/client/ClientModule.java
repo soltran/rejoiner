@@ -9,5 +9,6 @@ public final class ClientModule extends AbstractModule {
         install(new BookClientModule());
         install(new ShelfClientModule());
         install(new AppFlowClientModule());
+        install(new LambdaClientModule());
     }
 }

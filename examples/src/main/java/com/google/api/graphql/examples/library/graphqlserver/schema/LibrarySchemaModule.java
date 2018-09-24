@@ -34,25 +34,25 @@ import java.util.List;
 /** A GraphQL {@link SchemaModule} backed by a gRPC service. */
 final class LibrarySchemaModule extends SchemaModule {
 
-  @Mutation("createBookAndAddToShelf")
-  Book createBookAndAddToShelf(
-      CreateBookRequest request,
-      @Arg("shelf") GetShelfRequest shelfRequest,
-      ShelfServiceGrpc.ShelfServiceBlockingStub shelfClient,
-      BookServiceGrpc.BookServiceBlockingStub bookClient) {
-    Book book = bookClient.createBook(request);
-    Shelf shelf = shelfClient.getShelf(shelfRequest);
-    // TODO: Add an update shelf RPC
-    // shelfClient.updateShelf(shelf.toBuilder().addBookIds(book.getId()).build());
-    return book;
-  }
-
-  @SchemaModification(addField = "books", onType = Shelf.class)
-  ListenableFuture<List<Book>> shelfToBooks(Shelf shelf, DataFetchingEnvironment environment) {
-    return FutureConverter.toListenableFuture(
-        environment
-            .<DataLoaderRegistry>getContext()
-            .<String, Book>getDataLoader("books")
-            .loadMany(shelf.getBookIdsList()));
-  }
+//  @Mutation("createBookAndAddToShelf")
+//  Book createBookAndAddToShelf(
+//      CreateBookRequest request,
+//      @Arg("shelf") GetShelfRequest shelfRequest,
+//      ShelfServiceGrpc.ShelfServiceBlockingStub shelfClient,
+//      BookServiceGrpc.BookServiceBlockingStub bookClient) {
+//    Book book = bookClient.createBook(request);
+//    Shelf shelf = shelfClient.getShelf(shelfRequest);
+//    // TODO: Add an update shelf RPC
+//    // shelfClient.updateShelf(shelf.toBuilder().addBookIds(book.getId()).build());
+//    return book;
+//  }
+//
+//  @SchemaModification(addField = "books", onType = Shelf.class)
+//  ListenableFuture<List<Book>> shelfToBooks(Shelf shelf, DataFetchingEnvironment environment) {
+//    return FutureConverter.toListenableFuture(
+//        environment
+//            .<DataLoaderRegistry>getContext()
+//            .<String, Book>getDataLoader("books")
+//            .loadMany(shelf.getBookIdsList()));
+//  }
 }

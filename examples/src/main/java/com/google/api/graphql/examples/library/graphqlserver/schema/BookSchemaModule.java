@@ -38,15 +38,15 @@ final class BookSchemaModule extends SchemaModule {
 //            .load(request.getId()));
 //  }
 
-  @Query("listBooks")
-  ListenableFuture<ListBooksResponse> listBooks(
-      ListBooksRequest request, BookServiceGrpc.BookServiceFutureStub client) {
-    return client.listBooks(request);
-  }
-
-  @Mutation("createBook")
-  ListenableFuture<Book> createBook(
-      CreateBookRequest request, BookServiceGrpc.BookServiceFutureStub client) {
-    return client.createBook(request);
-  }
+//  @Query("listBooks")
+//  ListenableFuture<ListBooksResponse> listBooks(
+//      ListBooksRequest request, BookServiceGrpc.BookServiceFutureStub client) {
+//    return client.listBooks(request);
+//  }
+//
+//  @Mutation("createBook")
+//  ListenableFuture<Book> createBook(
+//      CreateBookRequest request, BookServiceGrpc.BookServiceFutureStub client) {
+//    return client.createBook(request);
+//  }
 }

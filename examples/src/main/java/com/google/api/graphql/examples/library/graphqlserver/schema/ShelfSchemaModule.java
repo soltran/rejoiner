@@ -29,24 +29,24 @@ import com.google.example.library.shelf.v1.ShelfServiceGrpc;
 /** A GraphQL {@link SchemaModule} backed by a gRPC service. */
 final class ShelfSchemaModule extends GrpcSchemaModule {
 
-  @Override
-  protected void configureSchema() {
-    addMutationList(
-        serviceToFields(ShelfServiceGrpc.ShelfServiceFutureStub.class, ImmutableList.of("createShelf", "mergeShelves"))
-    );
-  }
-
-  @Query("getShelf")
-  @RelayNode
-  ListenableFuture<Shelf> getShelf(
-      GetShelfRequest request, ShelfServiceGrpc.ShelfServiceFutureStub client) {
-    return client.getShelf(request);
-  }
-
-  @Query("listShelves")
-  ListenableFuture<ListShelvesResponse> listShelves(
-      ListShelvesRequest request, ShelfServiceGrpc.ShelfServiceFutureStub client) {
-    return client.listShelves(request);
-  }
+//  @Override
+//  protected void configureSchema() {
+//    addMutationList(
+//        serviceToFields(ShelfServiceGrpc.ShelfServiceFutureStub.class, ImmutableList.of("createShelf", "mergeShelves"))
+//    );
+//  }
+//
+//  @Query("getShelf")
+//  @RelayNode
+//  ListenableFuture<Shelf> getShelf(
+//      GetShelfRequest request, ShelfServiceGrpc.ShelfServiceFutureStub client) {
+//    return client.getShelf(request);
+//  }
+//
+//  @Query("listShelves")
+//  ListenableFuture<ListShelvesResponse> listShelves(
+//      ListShelvesRequest request, ShelfServiceGrpc.ShelfServiceFutureStub client) {
+//    return client.listShelves(request);
+//  }
 
 }

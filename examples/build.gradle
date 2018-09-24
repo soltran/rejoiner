@@ -24,6 +24,9 @@ sourceSets {
   main {
     proto {
       srcDir '/Users/soltran/Projects/spark/src/rubrik/appflows-service/proto'
+      srcDir '/Users/soltran/Projects/spark/src/rubrik/lambda-configuration' +
+              '-service' +
+              '/proto'
     }
   }
 }
